@@ -1,3 +1,16 @@
+<#
+.SYNOPSIS
+  Performs a WiFi Network Adapter reconnect/reboot.
+
+  .DESCRIPTION
+  It searches through the long list of network adapters for a match and if found it reconnects/reboots the WiFi network adapter.
+
+  .Author
+  Lars Boos aka Livedeath2k
+  Mady with Love, Coffee and a long list of Games in my Steam Library. ;-)
+#>
+
+# Set the Exec Policy temporarily to bypass
 Set-Executionpolicy -ExecutionPolicy Bypass -Scope Process
 
 # Get the ID and security principal of the current user account
@@ -35,12 +48,14 @@ Set-Executionpolicy -ExecutionPolicy Bypass -Scope Process
     exit
     }
 
-
+# It searches through the network adapter list and it will have a match when the name is WLAN of Wireless LAN of a Network Adapter.
 $device = Get-PnpDevice | Where-Object {($_.Class -eq "Net") -and ($_.FriendlyName -like "WLAN" -or $_.FriendlyName -like "Wireless LAN")}
+# If it won't work it searches through the list with a list of Names.
 if ($device -like ''){
 $device = Get-PnpDevice | Where-Object {$_.Class -eq "Net" -and $_.FriendlyName -eq "FRITZ!WLAN USB Stick AC 860"}
 $device = Get-PnpDevice | Where-Object {$_.Class -eq "Net" -and $_.FriendlyName -eq "Realtek 8812BU Wireless LAN 802.11ac USB NIC"}
 }
+# If found it will reboot the WiFi network adapter
 if ($device)
 {
 Disable-PnpDevice -InstanceId $device.InstanceId -Confirm:$false
